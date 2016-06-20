@@ -141,6 +141,7 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
       echo
       echo '   -h                       Show this message'
       echo
+      exit 0
     ;;
     \?)
       $0 -h
