@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Runing without parameters prints help message
-if [[ $@ == "" ]]; then
-  $0 -h
-fi
-
 while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
   case $opt in
     t)
@@ -106,7 +101,7 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
         ;;
       esac
     ;;
-    h)
+    h | : | \? | *)
       echo "Version 0.1"
       echo '--'
       echo "Usage: $0 [options]"
@@ -143,11 +138,20 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
       echo
       exit 0
     ;;
-    \?)
-      $0 -h
-    ;;
   esac
 done
+
+# Runing without parameters prints help message
+if [[ -z $@ ]]; then
+  $0 -h
+  exit 0
+fi
+
+# Parsing more unknown arguments
+if [[ -z $OPTARG && $OPTIND == 1 ]]; then
+  $0 -h
+  exit 0
+fi
 
 if [[ -z $ticket ]]; then
   echo 'Error: The -t option is required'
