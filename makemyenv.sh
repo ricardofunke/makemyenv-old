@@ -182,30 +182,34 @@ if [[ $lrver != ${patch##*-} ]]; then
   exit 1
 fi
 
+# Create DB for the new environment
 BOX_URL='http://192.168.110.251/vagrant-boxes'
 DB_SERVER='192.168.110.120'
 DB_ADM='admin'
 DB_PASS='4c2b2cdcbe7f369d3d01a8f3c5202e37'
 
-# Create DB
 dbuser=${ticket//-/}
 dbpass=${ticket//-/}
 dbname=${ticket//-/}
 
 case $db in
   postgresql)
-# better not ident heredocs
+
+# better not indent heredocs
 PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM posgres << END
 CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
 CREATE DATABASE ${dbname} OWNER ${dbuser};
 END
+
     [[ $? -ne 0 ]] && exit 1
   ;;
   mysql)
+
 mysql -h $DB_SERVER -u $DB_ADM -p $DB_PASS << END
 CREATE DATABASE ${dbname};
 GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
 END
+
     [[ $? -ne 0 ]] && exit 1
   ;;
   mssql)
@@ -215,21 +219,24 @@ END
     [[ $? -ne 0 ]] && exit 1
   ;;
   oracle)
+
 sqlplus ${DB_ADM}/${DB_PASS}@${DB_SERVER}/ORCL << END
 ALTER SESSION SET "_ORACLE_SCRIPT"=true;
 CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
 GRANT UNLIMITED TABLESPACE TO ${dbuser};
 END
+
     [[ $? -ne 0 ]] && exit 1
   ;;
   db2)
   ;;
 esac
 
-HOME_USER="/home/vagrant"
-TICKETS_DIR="${HOME_USER}/tickets"
-PROPS_TPL_DIR="${HOME_USER}/props-templates"
-PUPPET_TPL_DIR="${HOME_USER}/puppet-templates"
+USER_HOME="/home/vagrant"
+TICKETS_DIR="${USER_HOME}/tickets"
+PROPS_TPL_DIR="${USER_HOME}/props-templates"
+PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
+DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 
 # Prepare vagrant user directory
 cd $TICKETS_DIR && mkdir $ticket && cd $ticket || exit 1
@@ -278,6 +285,10 @@ fi
 #   ;;
 # esac
 
+# Inform puppet what driver to install on Liferay
+sed -i "s/@@DB@@/${db}/" manifests/default.pp || exit 1
+
 vagrant up || exit 1
 vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
-vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}" || exit 1
+vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"  || exit 1
+
