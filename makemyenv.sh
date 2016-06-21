@@ -199,17 +199,20 @@ PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM posgres << END
 CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
 CREATE DATABASE ${dbname} OWNER ${dbuser};
 END
+    [[ $? -ne 0 ]] && exit 1
   ;;
   mysql)
 mysql -h $DB_SERVER -u $DB_ADM -p $DB_PASS << END
 CREATE DATABASE ${dbname};
 GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
 END
+    [[ $? -ne 0 ]] && exit 1
   ;;
   mssql)
     isql $DB_SERVER $DB_ADM $DB_PASS -b "CREATE DATABASE ${dbname}"
     dbuser='sa'
     dbpass='password'
+    [[ $? -ne 0 ]] && exit 1
   ;;
   oracle)
 sqlplus ${DB_ADM}/${DB_PASS}@${DB_SERVER}/ORCL << END
@@ -217,43 +220,49 @@ ALTER SESSION SET "_ORACLE_SCRIPT"=true;
 CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
 GRANT UNLIMITED TABLESPACE TO ${dbuser};
 END
+    [[ $? -ne 0 ]] && exit 1
   ;;
   db2)
   ;;
 esac
 
+HOME_USER="/home/vagrant"
+TICKETS_DIR="${HOME_USER}/tickets"
+PROPS_TPL_DIR="${HOME_USER}/props-templates"
+PUPPET_TPL_DIR="${HOME_USER}/puppet-templates"
+
 # Prepare vagrant user directory
-cd tickets && mkdir $ticket && cd $ticket
+cd $TICKETS_DIR && mkdir $ticket && cd $ticket || exit 1
 
 # Prepare user portal-ext.properties
-cat ../props-templates/db/${db}-portal-ext.properties >> portal-ext.properties
-[[ -n $ldap ]] && cat ../props-templates/ldap/${ldap}-portal-ext.properties >> portal-ext.properties
-[[ -n $sso ]] && cat ../props-templates/sso/${sso}-portal-ext.properties >> portal-ext.properties
+cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties || exit 1
+[[ -n $ldap ]] && cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
+[[ -n $sso ]] && cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties || exit 1
 
-sed -i "s/@@USER@@/${dbuser}" portal-ext.properties
-sed -i "s/@@PASS@@/${dbpass}" portal-ext.properties
+sed -i "s/@@USER@@/${dbuser}" portal-ext.properties || exit 1
+sed -i "s/@@PASS@@/${dbpass}" portal-ext.properties || exit 1
 
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 
-  mkdir manifests && cp ../puppet-templates/manifests/java-as-lrver.pp manifests/default.pp
-  cp -r ../puppet-templates/modules/ .
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java-as-lrver.pp manifests/default.pp || exit 1
+  cp -r ${PUPPET_TPL_DIR}/modules/ . || exit 1
 
-  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp
-  sed -i "s/@@AS@@/${as}/"        manifests/default.pp
-  sed -i "s/@@LRVER@@/${lrver}/"  manifests/default.pp
+  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp || exit 1
+  sed -i "s/@@AS@@/${as}/"        manifests/default.pp || exit 1
+  sed -i "s/@@LRVER@@/${lrver}/"  manifests/default.pp || exit 1
 
-  vagrant init -m $ticket $BOX_URL/ubuntu.box
+  vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
 elif [[ $os == "linux" ]]; then
 
-  mkdir manifests && cp ../puppet-templates/manifests/java.pp manifests/default.pp
-  cp -r ../puppet-templates/modules/ .
+  mkdir manifests && cp ../puppet-templates/manifests/java.pp manifests/default.pp || exit 1
+  cp -r ../puppet-templates/modules/ . || exit 1
 
-  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp
+  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp || exit 1
 
-  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box
+  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
 
 fi
 
@@ -267,6 +276,6 @@ fi
 #   ;;
 # esac
 
-vagrant up
-vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}"
-vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"
+vagrant up || exit 1
+vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
+vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}" || exit 1
