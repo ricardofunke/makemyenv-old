@@ -273,6 +273,11 @@ elif [[ $os == "linux" ]]; then
 
   vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
 
+# If windows, use an "out-of-the-box" box
+elif [[ $os == "windows" ]]; then
+
+  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
+
 fi
 
 # Configure Java version
