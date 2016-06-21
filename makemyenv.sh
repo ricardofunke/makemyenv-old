@@ -239,8 +239,10 @@ cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties || 
 [[ -n $ldap ]] && cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
 [[ -n $sso ]] && cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties || exit 1
 
-sed -i "s/@@USER@@/${dbuser}" portal-ext.properties || exit 1
-sed -i "s/@@PASS@@/${dbpass}" portal-ext.properties || exit 1
+sed -i "s/@@DB_SERVER@@/${DB_SERVER}/" portal-ext.properties || exit 1
+sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties || exit 1
+sed -i "s/@@USER@@/${dbuser}/"         portal-ext.properties || exit 1
+sed -i "s/@@PASS@@/${dbpass}/"         portal-ext.properties || exit 1
 
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
