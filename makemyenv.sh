@@ -1,5 +1,42 @@
 #!/bin/bash
 
+show_usage(){
+      echo "Version 0.1"
+      echo '--'
+      echo "Usage: $0 [options]"
+      echo
+      echo 'Options:'
+      echo '   -t <ticket-name>         Insert the LESA ticket name'
+      echo '                            <required>'
+      echo
+      echo '   -v <liferay-version>     Insert the Liferay version without dots'
+      echo '                            default: <6210>'
+      echo
+      echo '   -o <operating-system>    Insert the Operating System for Liferay'
+      echo '                            default: <linux>'
+      echo
+      echo '   -a <application-server>  Insert the Application Server for Liferay'
+      echo '                            default: <tomcat>'
+      echo
+      echo '   -p <patch>               Insert the patch (hotfix or fix-pack) for Liferay'
+      echo '                            default: <none>'
+      echo
+      echo '   -j <java-version>        Insert the Java Version for Liferay'
+      echo '                            default: <6>'
+      echo
+      echo '   -d <database>            Insert the Database for Liferay'
+      echo '                            default: <postgresql>'
+      echo
+      echo '   -l <ldap-server>         Insert the LDAP Server to integrate with Liferay'
+      echo '                            default: <none>'
+      echo
+      echo '   -s <sso-method>          Insert the SSO method to integrate with Liferay'
+      echo '                            default: <none>'
+      echo
+      echo '   -h                       Show this message'
+      echo
+}
+
 while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
   case $opt in
     t)
@@ -101,56 +138,26 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
         ;;
       esac
     ;;
-    h | : | \? | *)
-      echo "Version 0.1"
-      echo '--'
-      echo "Usage: $0 [options]"
-      echo
-      echo 'Options:'
-      echo '   -t <ticket-name>         Insert the LESA ticket name'
-      echo '                            <required>'
-      echo
-      echo '   -v <liferay-version>     Insert the Liferay version without dots'
-      echo '                            default: <6210>'
-      echo
-      echo '   -o <operating-system>    Insert the Operating System for Liferay'
-      echo '                            default: <linux>'
-      echo
-      echo '   -a <application-server>  Insert the Application Server for Liferay'
-      echo '                            default: <tomcat>'
-      echo
-      echo '   -p <patch>               Insert the patch (hotfix or fix-pack) for Liferay'
-      echo '                            default: <none>'
-      echo
-      echo '   -j <java-version>        Insert the Java Version for Liferay'
-      echo '                            default: <6>'
-      echo
-      echo '   -d <database>            Insert the Database for Liferay'
-      echo '                            default: <postgresql>'
-      echo
-      echo '   -l <ldap-server>         Insert the LDAP Server to integrate with Liferay'
-      echo '                            default: <none>'
-      echo
-      echo '   -s <sso-method>          Insert the SSO method to integrate with Liferay'
-      echo '                            default: <none>'
-      echo
-      echo '   -h                       Show this message'
-      echo
+    h)
+      show_usage()
       exit 0
     ;;
+    : | \? | *)
+      show_usage()
+      exit 1
   esac
 done
 
 # Runing without parameters prints help message
 if [[ -z $@ ]]; then
-  $0 -h
-  exit 0
+  show_usage()
+  exit 1
 fi
 
-# Parsing more unknown arguments
+# Parsing arguments without less signal
 if [[ -z $OPTARG && $OPTIND == 1 ]]; then
-  $0 -h
-  exit 0
+  show_usage()
+  exit 1
 fi
 
 if [[ -z $ticket ]]; then
@@ -187,16 +194,17 @@ dbname=${ticket//-/}
 
 case $db in
   postgresql)
-    PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM posgres << EOF
-     CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
-     CREATE DATABASE ${dbname} OWNER ${dbuser};
-EOF
+# better not ident heredocs
+PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM posgres << END
+CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
+CREATE DATABASE ${dbname} OWNER ${dbuser};
+END
   ;;
   mysql)
-    mysql -h $DB_SERVER -u $DB_ADM -p $DB_PASS << EOF
-      CREATE DATABASE ${dbname};
-      GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
-EOF
+mysql -h $DB_SERVER -u $DB_ADM -p $DB_PASS << END
+CREATE DATABASE ${dbname};
+GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
+END
   ;;
   mssql)
     isql $DB_SERVER $DB_ADM $DB_PASS -b "CREATE DATABASE ${dbname}"
@@ -204,11 +212,11 @@ EOF
     dbpass='password'
   ;;
   oracle)
-    sqlplus ${DB_ADM}/${DB_PASS}@${DB_SERVER}/ORCL << EOF
-      ALTER SESSION SET "_ORACLE_SCRIPT"=true;
-      CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
-      GRANT UNLIMITED TABLESPACE TO ${dbuser};
-EOF
+sqlplus ${DB_ADM}/${DB_PASS}@${DB_SERVER}/ORCL << END
+ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
+GRANT UNLIMITED TABLESPACE TO ${dbuser};
+END
   ;;
   db2)
   ;;
