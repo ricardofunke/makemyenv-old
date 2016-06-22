@@ -254,22 +254,22 @@ sed -i "s/@@PASS@@/${dbpass}/"         portal-ext.properties || exit 1
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 
-  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java-as-lrver.pp manifests/default.pp || exit 1
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/default.pp manifests/default.pp || exit 1
   cp -r ${PUPPET_TPL_DIR}/modules/ . || exit 1
 
-  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp || exit 1
-  sed -i "s/@@AS@@/${as}/"        manifests/default.pp || exit 1
-  sed -i "s/@@LRVER@@/${lrver}/"  manifests/default.pp || exit 1
+  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp    || exit 1
+  sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp || exit 1
+  sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp || exit 1
 
   vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
 elif [[ $os == "linux" ]]; then
 
-  mkdir manifests && cp ../puppet-templates/manifests/java.pp manifests/default.pp || exit 1
-  cp -r ../puppet-templates/modules/ . || exit 1
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java.pp manifests/default.pp || exit 1
+  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   .                    || exit 1
 
-  sed -i "s/@@JAVA@@/${java}/"    manifests/default.pp || exit 1
+  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp || exit 1
 
   vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
 
@@ -291,9 +291,10 @@ fi
 # esac
 
 # Inform puppet what driver to install on Liferay
-sed -i "s/@@DB@@/${db}/" manifests/default.pp || exit 1
+sed -i "s/@@DB@@/${db}/"       modules/liferay/init.pp || exit 1
+sed -i "s/@@PATCH@@/${patch}/" modules/liferay/init.pp || exit 1
 
 vagrant up || exit 1
-vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
-vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"  || exit 1
+#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
+#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"  || exit 1
 
