@@ -254,7 +254,7 @@ sed -i "s/@@PASS@@/${dbpass}/"         portal-ext.properties || exit 1
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 
-  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/default.pp manifests/default.pp || exit 1
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/liferay.pp manifests/default.pp || exit 1
   cp -r ${PUPPET_TPL_DIR}/modules/ . || exit 1
 
   sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp    || exit 1
@@ -267,7 +267,8 @@ if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 elif [[ $os == "linux" ]]; then
 
   mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java.pp manifests/default.pp || exit 1
-  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   .                    || exit 1
+  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   modules/             || exit 1
+  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/stdlib modules/             || exit 1
 
   sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp || exit 1
 
