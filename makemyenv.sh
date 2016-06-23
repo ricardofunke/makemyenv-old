@@ -243,6 +243,7 @@ DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 cd $TICKETS_DIR && mkdir $ticket && cd $ticket || exit 1
 
 # Prepare user portal-ext.properties
+echo 'setup.wizard.enabled=false' >> portal-ext.properties || exit 1
 cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties || exit 1
 if [[ -n $ldap ]]; then
   cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
