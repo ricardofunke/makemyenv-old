@@ -277,7 +277,8 @@ elif [[ $os == "linux" ]]; then
 
   sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp || exit 1
 
-  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
+  #vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
+  vagrant init -m $ticket ubuntu/trusty64 || exit 1
 
 # If windows, use an "out-of-the-box" box
 elif [[ $os == "windows" ]]; then
