@@ -266,8 +266,8 @@ if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
   sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp || exit 1
   sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp || exit 1
 
-  #vagrant init -m $ticket ubuntu/trusty64 || exit 1
-  vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
+  vagrant init -m $ticket ubuntu/trusty64 || exit 1
+  #vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
 elif [[ $os == "linux" ]]; then
