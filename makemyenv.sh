@@ -197,7 +197,7 @@ case $db in
   postgresql)
 
 # better not indent heredocs
-PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM posgres << END
+PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM postgres << END
 CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
 CREATE DATABASE ${dbname} OWNER ${dbuser};
 END
