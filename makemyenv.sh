@@ -295,11 +295,11 @@ fi
 # Inform puppet the Patching Tool version to download
 wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp || exit 1
 patching-tool-version="$(cat /tmp/LATEST.txt)" || exit 1
-sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/init.pp || exit 1
+sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/manifests/init.pp || exit 1
 
 # Inform puppet what driver to install on Liferay
-sed -i "s/@@DB@@/${db}/"       modules/liferay/init.pp || exit 1
-sed -i "s/@@PATCH@@/${patch}/" modules/liferay/init.pp || exit 1
+sed -i "s/@@DB@@/${db}/"       modules/liferay/manifests/init.pp || exit 1
+sed -i "s/@@PATCH@@/${patch}/" modules/liferay/manifests/init.pp || exit 1
 
 vagrant up || exit 1
 #vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
