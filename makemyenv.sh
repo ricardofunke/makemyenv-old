@@ -244,8 +244,12 @@ cd $TICKETS_DIR && mkdir $ticket && cd $ticket || exit 1
 
 # Prepare user portal-ext.properties
 cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties || exit 1
-[[ -n $ldap ]] && cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
-[[ -n $sso ]] && cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties || exit 1
+if [[ -n $ldap ]]; then
+  cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
+fi
+if [[ -n $sso ]]; then
+  cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties || exit 1
+fi
 
 sed -i "s/@@DB_SERVER@@/${DB_SERVER}/" portal-ext.properties || exit 1
 sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties || exit 1
