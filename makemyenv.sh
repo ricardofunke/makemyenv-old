@@ -139,24 +139,24 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
       esac
     ;;
     h)
-      show_usage()
+      show_usage
       exit 0
     ;;
     : | \? | *)
-      show_usage()
+      show_usage
       exit 1
   esac
 done
 
 # Runing without parameters prints help message
 if [[ -z $@ ]]; then
-  show_usage()
+  show_usage
   exit 1
 fi
 
 # Parsing arguments without less signal
 if [[ -z $OPTARG && $OPTIND == 1 ]]; then
-  show_usage()
+  show_usage
   exit 1
 fi
 
