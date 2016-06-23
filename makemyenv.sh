@@ -298,7 +298,7 @@ fi
 
 # Inform puppet the Patching Tool version to download
 wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp || exit 1
-patching-tool-version="$(cat /tmp/LATEST.txt)" || exit 1
+patching_tool_version="$(cat /tmp/LATEST.txt)" || exit 1
 sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/manifests/init.pp || exit 1
 
 # Inform puppet what driver to install on Liferay
