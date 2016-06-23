@@ -253,8 +253,8 @@ fi
 
 sed -i "s/@@DB_SERVER@@/${DB_SERVER}/" portal-ext.properties || exit 1
 sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties || exit 1
-sed -i "s/@@USER@@/${dbuser}/"         portal-ext.properties || exit 1
-sed -i "s/@@PASS@@/${dbpass}/"         portal-ext.properties || exit 1
+sed -i "s/@@DBUSER@@/${dbuser}/"       portal-ext.properties || exit 1
+sed -i "s/@@DBPASS@@/${dbpass}/"       portal-ext.properties || exit 1
 
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
@@ -266,7 +266,7 @@ if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
   sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp || exit 1
   sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp || exit 1
 
-  vagrant init ubuntu/trusty64 || exit 1
+  vagrant init -m ubuntu/trusty64 || exit 1
   #vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
