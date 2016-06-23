@@ -183,7 +183,8 @@ if [[ $lrver != ${patch##*-} ]]; then
 fi
 
 # Create DB for the new environment
-BOX_URL='http://192.168.110.251/vagrant-boxes'
+HTTP_SERVER='http://192.168.110.251'
+BOX_URL="${HTTP_SERVER}/vagrant-boxes"
 DB_SERVER='192.168.110.120'
 DB_ADM='admin'
 DB_PASS='4c2b2cdcbe7f369d3d01a8f3c5202e37'
@@ -290,6 +291,11 @@ fi
 #     vagrant ssh -c "home/liferay/jdk${java}.bat"
 #   ;;
 # esac
+
+# Inform puppet the Patching Tool version to download
+wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp || exit 1
+patching-tool-version="$(cat /tmp/LATEST.txt)" || exit 1
+sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/init.pp || exit 1
 
 # Inform puppet what driver to install on Liferay
 sed -i "s/@@DB@@/${db}/"       modules/liferay/init.pp || exit 1
