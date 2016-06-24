@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 show_usage(){
       echo "Version 0.1"
       echo '--'
@@ -202,7 +204,6 @@ CREATE USER ${dbuser} WITH PASSWORD '${dbpass}';
 CREATE DATABASE ${dbname} OWNER ${dbuser};
 END
 
-    [[ $? -ne 0 ]] && exit 1
   ;;
   mysql)
 
@@ -211,13 +212,11 @@ CREATE DATABASE ${dbname};
 GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
 END
 
-    [[ $? -ne 0 ]] && exit 1
   ;;
   mssql)
     isql $DB_SERVER $DB_ADM $DB_PASS -b "CREATE DATABASE ${dbname}"
     dbuser='sa'
     dbpass='password'
-    [[ $? -ne 0 ]] && exit 1
   ;;
   oracle)
 
@@ -227,7 +226,6 @@ CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
 GRANT UNLIMITED TABLESPACE TO ${dbuser};
 END
 
-    [[ $? -ne 0 ]] && exit 1
   ;;
   db2)
   ;;
@@ -240,51 +238,51 @@ PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
 DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 
 # Prepare vagrant user directory
-cd $TICKETS_DIR && mkdir $ticket && cd $ticket || exit 1
+cd $TICKETS_DIR && mkdir $ticket && cd $ticket 
 
 # Prepare user portal-ext.properties
-echo 'setup.wizard.enabled=false' >> portal-ext.properties || exit 1
-cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties || exit 1
+echo 'setup.wizard.enabled=false' >> portal-ext.properties 
+cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
 if [[ -n $ldap ]]; then
-  cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties || exit 1
+  cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties 
 fi
 if [[ -n $sso ]]; then
-  cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties || exit 1
+  cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties 
 fi
 
-sed -i "s/@@DB_SERVER@@/${DB_SERVER}/" portal-ext.properties || exit 1
-sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties || exit 1
-sed -i "s/@@DBUSER@@/${dbuser}/"       portal-ext.properties || exit 1
-sed -i "s/@@DBPASS@@/${dbpass}/"       portal-ext.properties || exit 1
+sed -i "s/@@DB_SERVER@@/${DB_SERVER}/" portal-ext.properties 
+sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties 
+sed -i "s/@@DBUSER@@/${dbuser}/"       portal-ext.properties 
+sed -i "s/@@DBPASS@@/${dbpass}/"       portal-ext.properties 
 
 # If Linux with tomcat or jboss let's use puppet to install Liferay
 if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 
-  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/liferay.pp manifests/default.pp || exit 1
-  cp -r ${PUPPET_TPL_DIR}/modules/ . || exit 1
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/liferay.pp manifests/default.pp 
+  cp -r ${PUPPET_TPL_DIR}/modules/ . 
 
-  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp    || exit 1
-  sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp || exit 1
-  sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp || exit 1
+  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp    
+  sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp 
+  sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp 
 
-  vagrant init -m ubuntu/trusty64 || exit 1
-  #vagrant init -m $ticket $BOX_URL/ubuntu.box || exit 1
+  vagrant init -m ubuntu/trusty64 
+  #vagrant init -m $ticket $BOX_URL/ubuntu.box 
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
 elif [[ $os == "linux" ]]; then
 
-  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java.pp manifests/default.pp || exit 1
-  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   modules/             || exit 1
-  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/stdlib modules/             || exit 1
+  mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java.pp manifests/default.pp 
+  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   modules/             
+  mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/stdlib modules/             
 
-  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp || exit 1
+  sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp 
 
-  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
+  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box 
 
 # If windows, use an "out-of-the-box" box
 elif [[ $os == "windows" ]]; then
 
-  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box || exit 1
+  vagrant init -m $ticket $BOX_URL/liferay-${lrver}-${as}-${os}.box 
 
 fi
 
@@ -299,15 +297,15 @@ fi
 # esac
 
 # Inform puppet the Patching Tool version to download
-wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp || exit 1
-patching_tool_version="$(cat /tmp/LATEST.txt)" || exit 1
-sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/manifests/init.pp || exit 1
+wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp 
+patching_tool_version="$(cat /tmp/LATEST.txt)" 
+sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/manifests/init.pp 
 
 # Inform puppet what driver to install on Liferay
-sed -i "s/@@DB@@/${db}/"       modules/liferay/manifests/init.pp || exit 1
-sed -i "s/@@PATCH@@/${patch}/" modules/liferay/manifests/init.pp || exit 1
+sed -i "s/@@DB@@/${db}/"       modules/liferay/manifests/init.pp 
+sed -i "s/@@PATCH@@/${patch}/" modules/liferay/manifests/init.pp 
 
-vagrant up || exit 1
-#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" || exit 1
-#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"  || exit 1
+vagrant up 
+#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh download ${patch}" 
+#vagrant ssh -c "/home/liferay/liferay-${lrver}/patching-tool.sh install ${patch}"  
 
