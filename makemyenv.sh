@@ -241,6 +241,11 @@ case $as in
   ;;
 esac
 
+# Prepare vagrant user directory
+cd $TICKETS_DIR 
+mkdir $ticket
+cd $ticket 
+
 # Create DB for the new environment
 HTTP_SERVER='http://192.168.110.251'
 BOX_URL="${HTTP_SERVER}/vagrant-boxes"
@@ -293,9 +298,6 @@ TICKETS_DIR="${USER_HOME}/tickets"
 PROPS_TPL_DIR="${USER_HOME}/props-templates"
 PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
 DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
-
-# Prepare vagrant user directory
-cd $TICKETS_DIR && mkdir $ticket && cd $ticket 
 
 # Prepare user portal-ext.properties
 echo 'setup.wizard.enabled=false' >> portal-ext.properties 
