@@ -4,27 +4,28 @@ set -e
 
 USER_HOME="/home/vagrant"
 TICKETS_DIR="${USER_HOME}/tickets"
+DB_SERVER='192.168.110.120'
+DB_ADM='admin'
+DB_PASS='4c2b2cdcbe7f369d3d01a8f3c5202e37'
 
 ticket=$1
 dbuser=${ticket//-/}
 dbpass=${ticket//-/}
 dbname=${ticket//-/}
-db="$(grep '$db_type' $TICKETS_DIR/${ticket}/modules/liferay/manifests/init.pp | awk -F'=' '{print $2}' | grep -Eo '[a-z0-9]+')"
+db="$(grep '$db_type' $TICKETS_DIR/${ticket}/modules/liferay/manifests/init.pp | awk -F'=' '{print $2}' | grep -Eo '[a-z0-9]+')" || (echo 'no $db_type variable'; exit 1)
 
 cd $TICKETS_DIR/$ticket
-vagrant ssh 'pkill java'
-vagrant ssh 'pkill -9 java'
-vagrant destroy
-cd $TICKETS_DIR
-[[ -n $ticket ]] && rm -rf $ticket
+[[ $(vagrant ssh -c 'pkill java') ]]    || true
+[[ $(vagrant ssh -c 'pkill -9 java') ]] || true
+vagrant destroy -f
 
 case $db in
   postgresql)
 
 # better not indent heredocs
 PGPASSWORD=$DB_PASS psql -h $DB_SERVER -U $DB_ADM postgres << END
-DROP DATABASE ${dbname} OWNER ${dbuser};
-DROP USER ${dbuser} WITH PASSWORD '${dbpass}';
+DROP DATABASE ${dbname};
+DROP USER ${dbuser};
 END
 
   ;;
@@ -53,3 +54,7 @@ END
   db2)
   ;;
 esac
+
+cd $TICKETS_DIR
+[[ -n $ticket ]] && rm -rf $ticket
+
