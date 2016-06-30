@@ -241,10 +241,11 @@ case $as in
   ;;
 esac
 
-# Prepare vagrant user directory
-cd $TICKETS_DIR 
-mkdir $ticket
-cd $ticket 
+USER_HOME="/home/vagrant"
+TICKETS_DIR="${USER_HOME}/tickets"
+PROPS_TPL_DIR="${USER_HOME}/props-templates"
+PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
+DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 
 # Create DB for the new environment
 HTTP_SERVER='http://192.168.110.251'
@@ -256,6 +257,11 @@ DB_PASS='4c2b2cdcbe7f369d3d01a8f3c5202e37'
 dbuser=${ticket//-/}
 dbpass=${ticket//-/}
 dbname=${ticket//-/}
+
+# Prepare vagrant user directory
+cd $TICKETS_DIR 
+mkdir $ticket
+cd $ticket 
 
 case $db in
   postgresql)
@@ -292,12 +298,6 @@ END
   db2)
   ;;
 esac
-
-USER_HOME="/home/vagrant"
-TICKETS_DIR="${USER_HOME}/tickets"
-PROPS_TPL_DIR="${USER_HOME}/props-templates"
-PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
-DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 
 # Prepare user portal-ext.properties
 echo 'setup.wizard.enabled=false' >> portal-ext.properties 
