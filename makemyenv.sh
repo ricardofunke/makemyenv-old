@@ -20,6 +20,9 @@ show_usage(){
       echo '   -a <application-server>  Insert the Application Server for Liferay'
       echo '                            default: <tomcat>'
       echo
+      echo '   -V <app-server-version>  Insert the Application Server version for Liferay'
+      echo '                            default: <last available>'
+      echo
       echo '   -p <patch>               Insert the patch (hotfix or fix-pack) for Liferay'
       echo '                            default: <none>'
       echo
@@ -85,6 +88,15 @@ while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
           exit 1
         ;;
       esac
+    ;;
+    V)
+      if [[ $OPTARG =~ [0-9\.]+ ]]; then
+          asver=$OPTARG
+      else
+          echo "Error: Application Server version not valid: \"$OPTARG\""
+          echo '  Please use numbers and dots'
+          exit 1
+      fi
     ;;
     p)
       if [[ $OPTARG =~ (portal|hotfix)-[0-9]+-(6130|6210) ]]; then
@@ -183,6 +195,47 @@ if [[ $lrver != ${patch##*-} ]]; then
   echo '  Please use a patch compatible with the Liferay version selected'
   exit 1
 fi
+
+# must be arrays
+# insert versions in decreasing order
+tomcat_versions=('7.0.62' '7.0.42')
+jboss_versions=('7.1.1')
+#websphere_versions=
+#weblogic_versions=
+case $as in
+  tomcat)
+    if [[ -z $asver ]]; then
+      asver=${tomcat_version[0]}
+    elif ! [[ ${tomcat_versions[*]} =~ $asver ]]; then
+      echo "$asver is not a valid tomcat version"
+      exit 1
+    fi
+  ;;
+  jboss)
+    if [[ -z $asver ]]; then
+      asver=${jboss_version[0]}
+    elif ! [[ ${jboss_versions[*]} =~ $asver ]]; then
+      echo "$asver is not a valid jboss version"
+      exit 1
+    fi
+  ;;
+  websphere)
+    if [[ -z $asver ]]; then
+      asver=${websphere_version[0]}
+    elif ! [[ ${websphere_versions[*]} =~ $asver ]]; then
+      echo "$asver is not a valid websphere version"
+      exit 1
+    fi
+  ;;
+  weblogic)
+    if [[ -z $asver ]]; then
+      asver=${weblogic_version[0]}
+    elif ! [[ ${weblogic_versions[*]} =~ $asver ]]; then
+      echo "$asver is not a valid weblogic version"
+      exit 1
+    fi
+  ;;
+esac
 
 # Create DB for the new environment
 HTTP_SERVER='http://192.168.110.251'
