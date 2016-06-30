@@ -207,7 +207,8 @@ case $as in
     if [[ -z $asver ]]; then
       asver=${tomcat_version[0]}
     elif ! [[ ${tomcat_versions[*]} =~ $asver ]]; then
-      echo "$asver is not a valid tomcat version"
+      echo "Error: $asver is not a valid tomcat version"
+      echo "  Please use one of ${tomcat_versions[@]}"
       exit 1
     fi
   ;;
@@ -215,7 +216,8 @@ case $as in
     if [[ -z $asver ]]; then
       asver=${jboss_version[0]}
     elif ! [[ ${jboss_versions[*]} =~ $asver ]]; then
-      echo "$asver is not a valid jboss version"
+      echo "Error: $asver is not a valid jboss version"
+      echo "  Please use one of ${jboss_versions[@]}"
       exit 1
     fi
   ;;
@@ -223,7 +225,8 @@ case $as in
     if [[ -z $asver ]]; then
       asver=${websphere_version[0]}
     elif ! [[ ${websphere_versions[*]} =~ $asver ]]; then
-      echo "$asver is not a valid websphere version"
+      echo "Error: $asver is not a valid websphere version"
+      echo "  Please use one of ${websphere_versions[@]}"
       exit 1
     fi
   ;;
@@ -231,7 +234,8 @@ case $as in
     if [[ -z $asver ]]; then
       asver=${weblogic_version[0]}
     elif ! [[ ${weblogic_versions[*]} =~ $asver ]]; then
-      echo "$asver is not a valid weblogic version"
+      echo "Error: $asver is not a valid weblogic version"
+      echo "  Please use one of ${weblogic_versions[@]}"
       exit 1
     fi
   ;;
@@ -316,6 +320,7 @@ if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
 
   sed -i "s/@@JAVA@@/${java}/"    modules/java/manifests/init.pp    
   sed -i "s/@@AS@@/${as}/"        modules/liferay/manifests/init.pp 
+  sed -i "s/@@ASVER@@/${asver}/"  modules/liferay/manifests/init.pp 
   sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp 
 
   #vagrant init -m ubuntu/trusty64 
