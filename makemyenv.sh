@@ -205,7 +205,7 @@ jboss_versions=('7.1.1')
 case $as in
   tomcat)
     if [[ -z $asver ]]; then
-      asver=${tomcat_version[0]}
+      asver=${tomcat_versions[0]}
     elif ! [[ ${tomcat_versions[*]} =~ $asver ]]; then
       echo "Error: $asver is not a valid tomcat version"
       echo "  Please use one of ${tomcat_versions[@]}"
@@ -214,7 +214,7 @@ case $as in
   ;;
   jboss)
     if [[ -z $asver ]]; then
-      asver=${jboss_version[0]}
+      asver=${jboss_versions[0]}
     elif ! [[ ${jboss_versions[*]} =~ $asver ]]; then
       echo "Error: $asver is not a valid jboss version"
       echo "  Please use one of ${jboss_versions[@]}"
@@ -223,7 +223,7 @@ case $as in
   ;;
   websphere)
     if [[ -z $asver ]]; then
-      asver=${websphere_version[0]}
+      asver=${websphere_versions[0]}
     elif ! [[ ${websphere_versions[*]} =~ $asver ]]; then
       echo "Error: $asver is not a valid websphere version"
       echo "  Please use one of ${websphere_versions[@]}"
@@ -232,7 +232,7 @@ case $as in
   ;;
   weblogic)
     if [[ -z $asver ]]; then
-      asver=${weblogic_version[0]}
+      asver=${weblogic_versions[0]}
     elif ! [[ ${weblogic_versions[*]} =~ $asver ]]; then
       echo "Error: $asver is not a valid weblogic version"
       echo "  Please use one of ${weblogic_versions[@]}"
