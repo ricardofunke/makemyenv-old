@@ -275,7 +275,7 @@ END
   ;;
   mysql)
 
-mysql -h $DB_SERVER -u $DB_ADM -p $DB_PASS << END
+mysql -h $DB_SERVER -u $DB_ADM -p${DB_PASS} << END
 CREATE DATABASE ${dbname};
 GRANT ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
 END
