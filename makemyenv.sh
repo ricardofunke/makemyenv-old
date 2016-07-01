@@ -247,22 +247,22 @@ PROPS_TPL_DIR="${USER_HOME}/props-templates"
 PUPPET_TPL_DIR="${USER_HOME}/puppet-templates"
 DB_DRIVERS_DIR="${USER_HOME}/db-drivers"
 
-# Create DB for the new environment
 HTTP_SERVER='http://192.168.110.251'
 BOX_URL="${HTTP_SERVER}/vagrant-boxes"
 DB_SERVER='192.168.110.120'
 DB_ADM='admin'
 DB_PASS='4c2b2cdcbe7f369d3d01a8f3c5202e37'
 
-dbuser=${ticket//-/}
-dbpass=${ticket//-/}
-dbname=${ticket//-/}
-
 # Prepare vagrant user directory
 cd $TICKETS_DIR 
 mkdir $ticket
 cd $ticket 
 
+dbuser=${ticket//-/}
+dbpass=${ticket//-/}
+dbname=${ticket//-/}
+
+# Create DB for the new environment
 case $db in
   postgresql)
 
@@ -299,7 +299,7 @@ END
   ;;
 esac
 
-# Prepare user portal-ext.properties
+# Prepare user's portal-ext.properties
 echo 'setup.wizard.enabled=false' >> portal-ext.properties 
 cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
 if [[ -n $ldap ]]; then
@@ -361,7 +361,7 @@ wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp
 patching_tool_version="$(cat /tmp/LATEST.txt)" 
 sed -i "s/@@PT_VERSION@@/${patching-tool-version}/" modules/liferay/manifests/init.pp 
 
-# Inform puppet what driver to install on Liferay
+# Inform puppet what driver and what patch to install on Liferay
 sed -i "s/@@DB@@/${db}/"       modules/liferay/manifests/init.pp 
 sed -i "s/@@PATCH@@/${patch}/" modules/liferay/manifests/init.pp 
 
