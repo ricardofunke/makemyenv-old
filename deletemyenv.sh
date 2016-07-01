@@ -51,7 +51,7 @@ END
 
 mysql -h $DB_SERVER -u $DB_ADM -p${DB_PASS} << END
 DROP DATABASE ${dbname};
-REVOKE ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%' IDENTIFIED BY '${dbpass}';
+REVOKE ALL PRIVILEGES ON ${dbname}.* TO '${dbuser}'@'%';
 DROP USER ${dbuser};
 END
 
