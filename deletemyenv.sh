@@ -57,13 +57,12 @@ END
 
   ;;
   mssql)
-    DB_SERVER='MSSQLServer'
     DB_ADM='sa'
     DB_PASS='password'
     dbuser='sa'
     dbpass='password'
 
-isql $DB_SERVER $DB_ADM $DB_PASS -b << EOF
+isql MSSQLServer $DB_ADM $DB_PASS -b << EOF
 DROP DATABASE ${dbname}
 EOF
 

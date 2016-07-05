@@ -282,13 +282,12 @@ END
 
   ;;
   mssql)
-    DB_SERVER='MSSQLServer'
     DB_ADM='sa'
     DB_PASS='password'
     dbuser='sa'
     dbpass='password'
 
-isql $DB_SERVER $DB_ADM $DB_PASS -b << END
+isql MSSQLServer $DB_ADM $DB_PASS -b << END
 CREATE DATABASE ${dbname}
 END
 
