@@ -325,7 +325,7 @@ if [[ -n $sso ]]; then
   cat ${PROPS_TPL_DIR}/sso/${sso}-portal-ext.properties >> portal-ext.properties 
 fi
 
-sed -i "s/@@DBSERVER@@/${DB_SERVER}/" portal-ext.properties 
+sed -i "s/@@DBSERVER@@/${DB_SERVER}/"  portal-ext.properties 
 sed -i "s/@@DBNAME@@/${dbname}/"       portal-ext.properties 
 sed -i "s/@@DBUSER@@/${dbuser}/"       portal-ext.properties 
 sed -i "s/@@DBPASS@@/${dbpass}/"       portal-ext.properties 
