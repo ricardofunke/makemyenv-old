@@ -287,7 +287,11 @@ END
     DB_PASS='password'
     dbuser='sa'
     dbpass='password'
-    isql $DB_SERVER $DB_ADM $DB_PASS -b "CREATE DATABASE ${dbname}"
+
+isql $DB_SERVER $DB_ADM $DB_PASS -b << END
+CREATE DATABASE ${dbname}
+END
+
   ;;
   oracle)
 

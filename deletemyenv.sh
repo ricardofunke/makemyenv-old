@@ -62,7 +62,11 @@ END
     DB_PASS='password'
     dbuser='sa'
     dbpass='password'
-    isql $DB_SERVER $DB_ADM $DB_PASS -b "DROP DATABASE ${dbname};"
+
+isql $DB_SERVER $DB_ADM $DB_PASS -b << EOF
+DROP DATABASE ${dbname}
+EOF
+
   ;;
   oracle)
 
