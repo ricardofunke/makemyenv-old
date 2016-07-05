@@ -283,7 +283,7 @@ END
   ;;
   mssql)
     DB_SERVER='MSSQLServer'
-    DB_ADMIN='sa'
+    DB_ADM='sa'
     DB_PASS='password'
     dbuser='sa'
     dbpass='password'
@@ -303,14 +303,14 @@ END
 
   ;;
   db2)
-    DB_ADMIN='liferay'
+    DB_ADM='liferay'
     DB_PASS='R3m3mb3r321'
     dbuser='liferay'
     dbpass='R3m3mb3r321'
     if [[ $lrver == '6210' ]]; then
-      sshpass -p ${DB_PASS} ssh ${DB_ADMIN}@${DB_SERVER} "db2 \"create db $dbname\""
+      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname\""
     else
-      sshpass -p ${DB_PASS} ssh ${DB_ADMIN}@${DB_SERVER} "db2 \"create db $dbname pagesize 4 k\""
+      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname pagesize 4 k\""
     fi
   ;;
 esac
