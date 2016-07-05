@@ -57,9 +57,12 @@ END
 
   ;;
   mssql)
-    isql $DB_SERVER $DB_ADM $DB_PASS -b "DROP DATABASE ${dbname};"
+    DB_SERVER='MSSQLServer'
+    DB_ADMIN='sa'
+    DB_PASS='password'
     dbuser='sa'
     dbpass='password'
+    isql $DB_SERVER $DB_ADM $DB_PASS -b "DROP DATABASE ${dbname};"
   ;;
   oracle)
 
