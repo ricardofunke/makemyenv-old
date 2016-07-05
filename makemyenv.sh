@@ -190,7 +190,7 @@ fi
 : ${ldap:=}
 : ${sso:=}
 
-if [[ $lrver != ${patch##*-} ]]; then
+if [[ $lrver != ${patch##*-} && -n $patch ]]; then
   echo "Error: The patch inserted \"${patch}\" doesn't match Liferay version \"${lrver}\""
   echo '  Please use a patch compatible with the Liferay version selected'
   exit 1
