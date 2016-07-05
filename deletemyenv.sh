@@ -73,6 +73,10 @@ END
 
   ;;
   db2)
+    DB_ADMIN='liferay'
+    dbuser='liferay'
+    dbpass='R3m3mb3r321'
+    ssh ${DB_ADMIN}@${DB_SERVER} "db2 \"drop db $dbname\""
   ;;
 esac
 
