@@ -308,9 +308,9 @@ END
     dbpass='R3m3mb3r321'
     echo 'Creating DB2 database, please wait...'
     if [[ $lrver == '6210' ]]; then
-      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname\""
+      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname pagesize 8 k\""
     else
-      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname pagesize 4 k\""
+      sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname\""
     fi
   ;;
 esac
