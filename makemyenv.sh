@@ -198,10 +198,33 @@ fi
 
 # must be arrays
 # insert versions in decreasing order
-tomcat_versions=('7.0.62' '7.0.42')
-jboss_versions=('7.1.1')
-#websphere_versions=
-#weblogic_versions=
+case $lrver in
+  6210)
+    tomcat_versions=('7.0.62' '7.0.42')
+    jboss_versions=('7.1.1')
+    #websphere_versions=
+    #weblogic_versions=
+  ;;
+  6130)
+    tomcat_versions=('7.0.40')
+    jboss_versions=('7.1.1')
+    #websphere_versions=
+    #weblogic_versions=
+  ;;
+  6120)
+    tomcat_versions=('7.0.27')
+    jboss_versions=('7.1.1')
+    #websphere_versions=
+    #weblogic_versions=
+  ;;
+  6110)
+    tomcat_versions=('7.0.25')
+    jboss_versions=('7.0.2')
+    #websphere_versions=
+    #weblogic_versions=
+  ;;
+esac
+
 case $as in
   tomcat)
     if [[ -z $asver ]]; then
