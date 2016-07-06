@@ -34,7 +34,8 @@ db="$(grep '$db_type' $TICKETS_DIR/${ticket}/modules/liferay/manifests/init.pp |
 
 cd $TICKETS_DIR/$ticket
 [[ $(vagrant ssh -c 'pkill java') ]]    || true # should continue even if it fails
-#[[ $(sleep 10; vagrant ssh -c 'pkill -9 java') ]] || true # should continue even if it fails
+sleep 10
+[[ $(vagrant ssh -c 'pkill -9 java') ]] || true # should continue even if it fails
 vagrant destroy -f
 
 case $db in
