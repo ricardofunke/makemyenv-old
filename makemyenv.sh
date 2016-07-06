@@ -294,6 +294,9 @@ END
   ;;
   oracle)
 
+    DB_ADM='SYSTEM'
+    DB_PASS='password'
+
 sqlplus ${DB_ADM}/${DB_PASS}@${DB_SERVER}/ORCL << END
 ALTER SESSION SET "_ORACLE_SCRIPT"=true;
 CREATE USER ${dbuser} IDENTIFIED BY ${dbpass} DEFAULT TABLESPACE USERS;
