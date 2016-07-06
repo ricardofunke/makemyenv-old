@@ -33,7 +33,7 @@ dbname=${ticket//-/}
 db="$(grep '$db_type' $TICKETS_DIR/${ticket}/modules/liferay/manifests/init.pp | awk -F'=' '{print $2}' | grep -Eo '[a-z0-9]+')" || (echo 'no $db_type variable'; exit 1)
 
 cd $TICKETS_DIR/$ticket
-echo 'Stoping App Server gracefully...'
+echo 'Stopping App Server gracefully...'
 [[ $(vagrant ssh -c 'pkill java') ]]    || true # should continue even if it fails
 echo 'Waiting for App Server to stop...'
 sleep 20
