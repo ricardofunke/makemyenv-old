@@ -42,7 +42,7 @@ show_usage(){
       echo
 }
 
-while getopts 't:v:o:a:p:j:d:l:s:h' opt; do
+while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
   case $opt in
     t)
       if [[ $OPTARG =~ [a-z]+-[0-9]+ ]]; then
