@@ -126,7 +126,7 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
         ;;
         *)
           echo "Error: Database not supported: \"$OPTARG\""
-          echo '  Please use postgresql, mysql, mssql, oracle or db2'
+          echo '  Please use postgresql, mysql, mssql, oracle, db2 or none (hsqldb)'
           exit 1
         ;;
       esac
