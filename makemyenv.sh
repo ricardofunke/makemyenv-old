@@ -350,7 +350,7 @@ esac
 
 # Prepare user's portal-ext.properties
 cat $PROPS_TPL_DIR/defaults-portal-ext.properties >> portal-ext.properties
-cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
+[[ ! ${db} == 'none' ]] && cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
 if [[ -n $ldap ]]; then
   cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties 
 fi
