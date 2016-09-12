@@ -121,7 +121,7 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
     ;;
     d)
       case $OPTARG in
-        postgresql|mysql|mssql|oracle|db2)
+        postgresql|mysql|mssql|oracle|db2|none)
           db=$OPTARG
         ;;
         *)
@@ -342,6 +342,9 @@ END
     dbpass='R3m3mb3r321'
     echo 'Creating DB2 database, please wait...'
     sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname pagesize 8 k\""
+  ;;
+  none)
+    echo "Using HSQLDB"
   ;;
 esac
 
