@@ -414,6 +414,7 @@ rm -rf /tmp/${ticket}
 sed -i "s/@@PTVER@@/${patching_tool_version}/" modules/liferay/manifests/init.pp 
 
 # Inform puppet what driver and what patch to install on Liferay
+[[ $db == 'none' ]] && db=postgresql
 sed -i "s/@@DB@@/${db}/"       modules/liferay/manifests/init.pp 
 sed -i "s/@@PATCH@@/${patch}/" modules/liferay/manifests/init.pp 
 
