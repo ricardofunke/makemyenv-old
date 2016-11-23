@@ -15,7 +15,7 @@ show_usage(){
       echo '                            default: <6210>'
       echo
       echo '   -o <operating-system>    Insert the Operating System for Liferay'
-      echo '                            default: <linux>'
+      echo '                            default: <ubuntu>'
       echo
       echo '   -a <application-server>  Insert the Application Server for Liferay'
       echo '                            default: <tomcat>'
