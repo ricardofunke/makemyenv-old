@@ -121,12 +121,12 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
     ;;
     d)
       case $OPTARG in
-        postgresql|mysql|mssql|oracle|db2)
+        postgresql|mysql|mssql|oracle|db2|none)
           db=$OPTARG
         ;;
         *)
           echo "Error: Database not supported: \"$OPTARG\""
-          echo '  Please use postgresql, mysql, mssql, oracle or db2'
+          echo '  Please use postgresql, mysql, mssql, oracle, db2 or none (hsqldb)'
           exit 1
         ;;
       esac
@@ -343,11 +343,14 @@ END
     echo 'Creating DB2 database, please wait...'
     sshpass -p ${DB_PASS} ssh ${DB_ADM}@${DB_SERVER} "db2 \"create db $dbname pagesize 8 k\""
   ;;
+  none)
+    echo "Using HSQLDB"
+  ;;
 esac
 
 # Prepare user's portal-ext.properties
 cat $PROPS_TPL_DIR/defaults-portal-ext.properties >> portal-ext.properties
-cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
+[[ ! ${db} == 'none' ]] && cat ${PROPS_TPL_DIR}/db/${db}-portal-ext.properties >> portal-ext.properties 
 if [[ -n $ldap ]]; then
   cat ${PROPS_TPL_DIR}/ldap/${ldap}-portal-ext.properties >> portal-ext.properties 
 fi
