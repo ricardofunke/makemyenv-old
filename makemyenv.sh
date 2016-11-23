@@ -67,12 +67,12 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
     ;;
     o)
       case $OPTARG in
-        linux|windows)
+        ubuntu|centos|windows)
           os=$OPTARG
         ;;
         *)
           echo "Error: Operating System not supported: \"$OPTARG\""
-          echo '  Please use linux or windows'
+          echo '  Please use ubuntu, centos or windows'
           exit 1
         ;;
       esac
@@ -182,7 +182,7 @@ fi
 
 # Setting default values
 : ${lrver:=6210}
-: ${os:=linux}
+: ${os:=ubuntu}
 : ${as:=tomcat}
 : ${patch:=}
 : ${java:=6}
@@ -361,7 +361,7 @@ sed -i "s/@@DBUSER@@/${dbuser}/"       portal-ext.properties
 sed -i "s/@@DBPASS@@/${dbpass}/"       portal-ext.properties 
 
 # If Linux with tomcat or jboss let's use puppet to install Liferay
-if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
+if [[ $os =~ (ubuntu|centos) && $as =~ (tomcat|jboss) ]]; then
 
   mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/liferay.pp manifests/default.pp 
   cp -r ${PUPPET_TPL_DIR}/modules/ . 
@@ -371,11 +371,17 @@ if [[ $os == "linux" && $as =~ (tomcat|jboss) ]]; then
   sed -i "s/@@ASVER@@/${asver}/"  modules/liferay/manifests/init.pp 
   sed -i "s/@@LRVER@@/${lrver}/"  modules/liferay/manifests/init.pp 
 
-  #vagrant init -m ubuntu/trusty64 
-  vagrant init -m $ticket "$BOX_URL/trusty-server-cloudimg-amd64-vagrant-disk1.box" 
+  case $os in
+    "ubuntu")
+      vagrant init -m $ticket "$BOX_URL/trusty-server-cloudimg-amd64-vagrant-disk1.box" 
+    ;;
+    "centos")
+      vagrant init -m $ticket "$BOX_URL/centos-7.2.box" 
+    ;;
+  esac
 
 # If not tomcat or jboss, use puppet only for java installation and a box already prepared for the rest of the job
-elif [[ $os == "linux" ]]; then
+elif [[ $os =~ (ubuntu|centos) ]]; then
 
   mkdir manifests && cp ${PUPPET_TPL_DIR}/manifests/java.pp manifests/default.pp 
   mkdir modules   && cp -r ${PUPPET_TPL_DIR}/modules/java   modules/             
