@@ -45,7 +45,7 @@ show_usage(){
 while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
   case $opt in
     t)
-      if [[ $OPTARG =~ [a-z]+-[0-9]+ ]]; then
+      if [[ $OPTARG =~ [a-z0-9]+-[0-9]+ ]]; then
         ticket=$OPTARG
       else
         echo "Error: Invalid ticket name: \"$OPTARG\""
