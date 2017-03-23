@@ -201,7 +201,7 @@ fi
 case $lrver in
   7010)
     tomcat_versions=('8.0.32')  
-    jboss_versions=('6.4')
+    jboss_versions=('eap-6.4')
     #websphere_versions=
     #weblogic_versions=
   ;;	  
