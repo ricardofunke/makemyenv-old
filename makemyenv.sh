@@ -421,10 +421,11 @@ fi
 mkdir /tmp/${ticket}
 if [[ $lrver == '7010' ]]; then
   wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST-2.0.txt -P /tmp/${ticket}/
+  patching_tool_version="$(cat /tmp/${ticket}/LATEST-2.0.txt)"
 else
   wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp/${ticket}/
+  patching_tool_version="$(cat /tmp/${ticket}/LATEST.txt)"
 fi
-patching_tool_version="$(cat /tmp/${ticket}/LATEST.txt)"
 rm -rf /tmp/${ticket}
 
 sed -i "s/@@PTVER@@/${patching_tool_version}/" modules/liferay/manifests/init.pp 
