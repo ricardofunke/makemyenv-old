@@ -13,7 +13,7 @@ if [[ -z $1 ]]; then
   exit 1
 fi
 
-if [[ $1 =~ [a-z]+-[0-9]+ ]]; then
+if [[ $1 =~ [a-z0-9]+-[0-9]+ ]]; then
   ticket=$1
 else
   echo "Error: Invalid ticket name: \"$1\""
