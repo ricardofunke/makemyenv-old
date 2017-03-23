@@ -55,12 +55,12 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
     ;;
     v)
       case $OPTARG in 
-        6110|6120|6130|6210)
+        6110|6120|6130|6210|7010)
           lrver=$OPTARG
         ;;
         *)
           echo "Error: Liferay version not supported: \"$OPTARG\""
-          echo '  Please use 6110, 6120, 6130 or 6210'
+          echo '  Please use 6110, 6120, 6130, 6210 or 7010'
           exit 1
         ;;
       esac
@@ -99,11 +99,11 @@ while getopts 't:v:o:a:V:p:j:d:l:s:h' opt; do
       fi
     ;;
     p)
-      if [[ $OPTARG =~ (portal|hotfix)-[0-9]+-(6130|6210) ]]; then
+      if [[ $OPTARG =~ (de|portal|hotfix)-[0-9]+-(6130|6210|7010) ]]; then
         patch=$OPTARG
       else
         echo "Error: Invalid patch name: \"$OPTARG\""
-        echo '  Please insert a patch name like: "[portal|hotfix]-123-[6130|6210]"'
+        echo '  Please insert a patch name like: "[de|portal|hotfix]-123-[6130|6210|7010]"'
         exit 1 
       fi
     ;;
@@ -199,6 +199,12 @@ fi
 # must be arrays
 # insert versions in decreasing order
 case $lrver in
+  7010)
+    tomcat_versions=('8.0.32')  
+    jboss_versions=('6.4')
+    #websphere_versions=
+    #weblogic_versions=
+  ;;	  
   6210)
     tomcat_versions=('7.0.62' '7.0.42')
     jboss_versions=('7.1.1')
@@ -413,7 +419,11 @@ fi
 
 # Inform puppet the Patching Tool version to download
 mkdir /tmp/${ticket}
-wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp/${ticket}/
+if [[ $lrver == '7010' ]]; then
+  wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST-2.0.txt -P /tmp/${ticket}/
+else
+  wget -q ${HTTP_SERVER}/private/ee/fix-packs/patching-tool/LATEST.txt -P /tmp/${ticket}/
+fi
 patching_tool_version="$(cat /tmp/${ticket}/LATEST.txt)"
 rm -rf /tmp/${ticket}
 
